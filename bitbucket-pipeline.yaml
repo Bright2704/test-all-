@@ -1,0 +1,28 @@
+pipelines:
+  default:
+    docker:
+      - image: node:18-alpine
+
+    script:
+      - apk add --no-cache --virtual .pipeline-deps build-base bash
+      - apk add --virtual .pipeline-deps yarn
+      - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+      - yarn install
+      - yarn build
+      - echo "Building completed. Artifacts ready for deployment."
+
+    artifacts:
+      - .next/build/*
+
+    caches:
+      - type: npm
+        paths:
+          - node_modules/
+
+  # Optional: deploy stage (replace with your deployment steps)
+  deploy:
+    extends:
+      - default
+    script:
+      - # Add your deployment commands here, e.g., using AWS CLI or serverless framework
+      - echo "Deployment completed."
