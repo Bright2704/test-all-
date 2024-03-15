@@ -1,20 +1,51 @@
-# Use a more recent LTS Node.js version (replace 18 with the desired LTS version)
-FROM node:18-lts-alpine
+# FROM node:18-alpine AS deps
+# RUN apk add --no-cache libc6-compat
+# WORKDIR /app
 
-# Set the working directory
+# COPY package.json package-lock.json ./
+# RUN npm install --production
+
+# FROM node:18-alpine AS builder
+# WORKDIR /app
+# COPY --from=deps /app/node_modules ./node_modules
+# COPY . .
+
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+# # Make sure to use build and not dev
+# RUN npm run build
+
+# FROM node:18-alpine AS runner
+# WORKDIR /app
+
+# ENV NODE_ENV production
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+# RUN addgroup --system --gid 1001 nodejs
+# RUN adduser --system --uid 1001 nextjs
+
+# COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+# COPY --from=builder /app/node_modules ./node_modules
+# COPY --from=builder /app/package.json ./package.json
+
+# USER nextjs
+
+# EXPOSE 3000
+
+# ENV PORT 3000
+
+# CMD ["npm", "start"]
+
+FROM node:18-alpine 
+
 WORKDIR /app
 
-# Copy essential files first (avoid copying unnecessary files)
-COPY package*.json ./
-
-# Install dependencies based on package.json
-RUN npm install
-
-# Copy the rest of the application code
 COPY . .
 
-# Expose the port
+RUN npm install
+
+RUN npm run build
+
 EXPOSE 3000
 
-# Start the Next.js development server
-CMD [ "npm", "run", "dev" ]  # Use "npm run build" for production
+CMD ["npm", "run", "dev"]
