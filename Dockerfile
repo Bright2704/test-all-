@@ -1,20 +1,20 @@
-# Specify the base image
-FROM node:14
+# Use a more recent LTS Node.js version (replace 18 with the desired LTS version)
+FROM node:18-lts-alpine
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to workdir in container
+# Copy essential files first (avoid copying unnecessary files)
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies based on package.json
 RUN npm install
 
-# Copy the rest of the code
+# Copy the rest of the application code
 COPY . .
 
-# Expose the port the app runs on
+# Expose the port
 EXPOSE 3000
 
-# Command to run the app
-CMD ["npm", "start"]
+# Start the Next.js development server
+CMD [ "npm", "run", "dev" ]  # Use "npm run build" for production
