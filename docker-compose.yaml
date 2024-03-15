@@ -1,12 +1,14 @@
-version: '3.8'
+version: '3.3'
 services:
+  app:
+    image: bright2704/test:1.0
   web:
     build: .
     volumes:
       - '.:/app'
       - '/app/node_modules'
     ports:
-      - '3000:3000'
+      - '3050:3000'
     environment:
       - NODE_ENV=development
     command: npm start
